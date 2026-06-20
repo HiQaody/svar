@@ -1,0 +1,46 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Jupyter
+.ipynb_checkpoints/
+
+# LaTeX build
+*.aux
+*.log
+*.out
+*.toc
+*.bbl
+*.blg
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.lof
+*.lot
+
+# Data (raw, processed, external)
+data/raw/
+data/external/
+*.xlsx
+*.xls
+
+# Output
+output/
+
+# OS
+Thumbs.db
+.DS_Store
+nul.png
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~

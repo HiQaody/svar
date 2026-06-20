@@ -1,0 +1,551 @@
+\documentclass[12pt,a4paper]{article}
+
+% ----- Packages -----
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{setspace}
+\usepackage{hyperref}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{multirow}
+\usepackage{appendix}
+\usepackage{mathptmx}
+\usepackage{titlesec}
+
+\onehalfspacing
+\setlength{\parindent}{0em}
+\setlength{\parskip}{0.7em}
+
+\titleformat{\section}{\Large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\large\bfseries}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries}{\thesubsubsection}{1em}{}
+
+\title{\textbf{Le pétrole fait-il vraiment flamber les prix à Madagascar ?\\ Une histoire de chocs, de taux de change et de monnaie\\ racontée par un modèle SVAR (2000--2025)}}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+
+\begin{center}
+  \large Document de recherche \\
+  \vspace{0.3cm}
+  \normalsize Juin 2026
+\end{center}
+
+\vspace{0.5cm}
+
+\begin{abstract}
+\noindent Ce papier raconte l'histoire compliquée entre le prix du pétrole sur les marchés internationaux et l'inflation à Madagascar. On a utilisé un modèle SVAR (un modèle statistique qui permet de faire parler les données) pour comprendre comment les fluctuations du brut se répercutent -- ou pas -- sur le coût de la vie des Malgaches. On a passé 25 ans de données mensuelles (2000--2025) au crible : prix du Brent, taux de change ariary-dollar, masse monétaire et indice des prix. Résultat ? Contre toute attente, la réponse de l'inflation à un choc pétrolier est \textbf{négative}. Dit autrement, quand le pétrole augmente, les prix à Madagascar ont tendance à baisser légèrement. Pas de quoi crier au miracle : cette bizarrerie s'explique surtout par la politique de stabilisation des carburants, les effets de récession importée, et le fait que les vrais moteurs de l'inflation malgache sont ailleurs (chocs agricoles, anticyclones, anticipations). Au final, le pétrole n'explique même pas 2\,\% des fluctuations de l'inflation. Une bonne nouvelle pour la politique monétaire, mais une invitation à regarder ailleurs pour comprendre ce qui fait vraiment grimper les prix.
+\vspace{0.3cm}
+
+\noindent\textbf{Mots-clés :} SVAR, inflation, pétrole, Madagascar, transmission des chocs \\
+\textbf{Classification JEL :} C32, E31, Q43, O55.
+\end{abstract}
+
+\newpage
+
+\tableofcontents
+\newpage
+
+% ============================================================
+% 1. INTRODUCTION
+% ============================================================
+\section{Pourquoi s'intéresser au pétrole et à l'inflation à Madagascar ?}
+
+\subsection{Le décor : une île dépendante du brut}
+
+Madagascar, comme beaucoup de petits pays en développement, est un \emph{price taker} sur le marché pétrolier mondial. Le pays ne produit pas de pétrole, mais en importe massivement pour faire tourner ses transports, son industrie et une partie de sa production d'électricité. Quand le baril flambe sur les marchés internationaux, la facture d'importation s'alourdit et tout devient plus cher : le transport du riz, le fonctionnement des usines, le carburant à la pompe.
+
+Entre 2000 et 2025, le prix du baril a vécu des montagnes russes. Il valait environ 25~\$ au début des années 2000, a grimpé à plus de 130~\$ en 2008, s'est effondré à 40~\$ pendant la crise, est remonté stablement autour de 100~\$, a dévissé à 30~\$, avant de reprendre des couleurs et de flirter avec les 120~\$ en 2022 suite à l'invasion de l'Ukraine. Ces variations sont brutales. Pour une économie comme Madagascar, c'est comme si on jouait aux montagnes russes avec le coût d'un intrant essentiel.
+
+Mais est-ce que ces fluctuations se répercutent vraiment sur l'inflation ? Et si oui, par quels canaux ? Est-ce que la Banque Centrale peut faire quelque chose ? C'est à ces questions que ce papier essaie de répondre.
+
+\subsection{Ce qu'on cherche à savoir}
+
+Concrètement, on veut comprendre le mécanisme suivant : quand le prix du pétrole monte sur les marchés mondiaux, est-ce que ça fait monter les prix à Madagascar ? Si oui, de combien, et pendant combien de temps ? Est-ce que le taux de change amplifie ou amortit le choc ? Est-ce que la politique monétaire joue un rôle ?
+
+La question de recherche peut se résumer simplement : \textbf{le prix du pétrole influence-t-il vraiment l'inflation malgache, et si oui, comment ?}
+
+\subsection{Les trois hypothèses qu'on veut tester}
+
+On part de trois idées simples :
+
+\begin{itemize}
+  \item[\textbf{H1}] \textbf{Le cost-push.} Si le pétrole augmente, les coûts de production et de transport grimpent, et les entreprises répercutent ça sur leurs prix. C'est la théorie de l'inflation par les coûts.
+  \item[\textbf{H2}] \textbf{Le canal du change.} Une hausse du pétrole détériore la balance commerciale, ce qui affaiblit l'ariary, ce qui rend les importations encore plus chères. Le taux de change aggrave donc l'effet initial.
+  \item[\textbf{H3}] \textbf{Un effet temporaire.} On s'attend à ce que l'impact sur l'inflation soit fort à court terme (6--12 mois) mais s'estompe progressivement.
+\end{itemize}
+
+\subsection{Ce qu'on va faire}
+
+Ce document est organisé en cinq parties. La section~2 fait le point sur ce que la littérature économique dit de la relation pétrole-inflation. La section~3 explique comment on a construit notre modèle et nos données. La section~4 montre les résultats bruts. La section~5 discute ce que tout ça veut dire. La conclusion résume l'essentiel.
+
+% ============================================================
+% 2. CE QUE LA LITTÉRATURE NOUS APPREND
+% ============================================================
+\section{L'état de l'art : ce qu'on sait déjà}
+
+\subsection{Les bases théoriques : trois canaux de transmission}
+
+La théorie économique identifie trois façons dont le prix du pétrole peut influencer l'inflation.
+
+\textbf{Le canal direct.} Les produits pétroliers (essence, gazole, fioul) sont directement dans le panier de l'IPC. Quand leur prix augmente, l'IPC suit mécaniquement. Pour Madagascar, les carburants représentent une part modeste mais non négligeable du budget des ménages urbains.
+
+\textbf{Le canal indirect.} Le pétrole est un intrant dans presque tous les processus de production et de distribution. Une hausse du brut augmente les coûts de transport des marchandises, les coûts de production agricole (tracteurs, irrigation), et les coûts de fabrication industrielle. Ces hausses de coûts sont progressivement répercutées sur les prix finals. Ce mécanisme prend du temps -- plusieurs mois -- mais c'est celui qui a l'impact le plus large.
+
+\textbf{Le canal des anticipations.} Quand les gens voient le prix du carburant monter à la pompe, ils s'attendent à ce que tout devienne plus cher. Ces anticipations peuvent devenir autoréalisatrices : les travailleurs réclament des hausses de salaire, les entreprises augmentent leurs prix par précaution, et on entre dans une spirale inflationniste. C'est le canal le plus insidieux.
+
+\subsection{Ce que les études précédentes ont trouvé}
+
+\subsubsection{Les travaux pionniers}
+
+L'histoire commence avec Hamilton (1983), qui a montré que presque toutes les récessions américaines d'après-guerre avaient été précédées par une flambée du pétrole. Ce papier fondateur a ouvert toute une littérature sur la relation entre l'énergie et l'activité économique.
+
+Bernanke, Gertler et Watson (1997) ont ensuite apporté une nuance importante : ce n'est pas tant le choc pétrolier lui-même qui cause les récessions, mais plutôt la réponse de la banque centrale -- qui augmente ses taux pour combattre l'inflation importée -- qui aggrave la situation. Autrement dit, le remède est pire que le mal.
+
+Kilian (2009) a fait un pas de plus en distinguant les \emph{types} de chocs pétroliers : sont-ils dus à des problèmes d'offre (guerre au Moyen-Orient), à une demande mondiale qui s'emballe (croissance chinoise), ou à des anticipations de pénurie ? La réponse à cette question change complètement l'analyse, car tous les chocs pétroliers ne se ressemblent pas.
+
+\subsubsection{Les études sur les pays en développement}
+
+Pour les pays africains, Fofana et al. (2021) ont estimé qu'un choc pétrolier se transmet à l'inflation à hauteur de 10 à 30\,\% sur 12 mois pour les pays importateurs de pétrole. Mais il y a une énorme hétérogénéité entre les pays, comme l'ont montré Chuku, Ekpo et Kim (2018) dans une étude paneuropéenne.
+
+Apere et Ijomah (2020) ont trouvé un résultat intéressant pour le Nigeria : la transmission est asymétrique. Quand le pétrole augmente, les prix montent vite. Quand il baisse, les prix ne redescendent pas. C'est ce qu'on appelle l'effet \emph{rochet} ou \emph{rocket and feathers} -- les prix montent comme une fusée et redescendent comme une plume.
+
+\subsubsection{Ce qui a été écrit sur Madagascar}
+
+La littérature sur Madagascar reste limitée. Ramiandrisoa et Randriambola (2019) ont utilisé un modèle VAR classique et trouvé un effet significatif mais modéré des chocs pétroliers, avec un pic d'impact après 6 à 8 mois. Razafindrakoto et Roubaud (2018) ont montré que le \emph{pass-through} des prix internationaux aux prix domestiques n'est que d'environ 60\,\% à long terme, à cause des interventions gouvernementales sur les prix des carburants.
+
+Notre papier se distingue de ces travaux par trois aspects : (i) on utilise un modèle SVAR (pas juste un VAR) avec une identification structurelle claire ; (ii) on couvre une période plus longue (2000--2025) qui inclut les chocs récents (COVID, Ukraine) ; (iii) on mobilise des données réelles, y compris celles de l'INSTAT pour le CPI récent.
+
+% ============================================================
+% 3. COMMENT ON A FAIT
+% ============================================================
+\section{La méthode et les données}
+
+\subsection{Le modèle SVAR en deux mots}
+
+Le modèle SVAR, c'est un peu le couteau suisse de la macroéconomie appliquée. On prend plusieurs séries temporelles -- ici le prix du pétrole, le taux de change, la masse monétaire et l'inflation -- et on regarde comment elles interagissent entre elles dans le temps. Chaque variable dépend de ses propres valeurs passées et de celles des autres variables. C'est ce qu'on appelle un VAR (Vector AutoRegressive).
+
+La lettre \emph{S} en plus, c'est ce qui fait toute la différence. \emph{Structurel} signifie qu'on utilise la théorie économique pour découper les corrélations entre les variables en relations de cause à effet. Concrètement, on impose un ordre dans les relations contemporaines entre les variables.
+
+\subsection{L'ordre de Cholesky : qui influence qui dans le même mois ?}
+
+Notre identification repose sur un ordre récursif, aussi appelé décomposition de Cholesky. Voici l'ordre qu'on a choisi :
+
+\begin{equation}
+  \begin{pmatrix}
+    \text{Pétrole} \\
+    \text{Taux de change} \\
+    \text{Masse monétaire} \\
+    \text{Inflation}
+  \end{pmatrix}
+  \leftarrow
+  \begin{pmatrix}
+    \text{exogène} \\
+    \text{influencé par le pétrole} \\
+    \text{influencé par le pétrole et le change} \\
+    \text{influencé par tout}
+  \end{pmatrix}
+\end{equation}
+
+\noindent Concrètement, ça veut dire :
+
+\begin{enumerate}
+  \item \textbf{Le pétrole est exogène.} Madagascar ne pèse rien sur le marché mondial. Le prix du brut est déterminé à Londres et New York, pas à Antananarivo. Il n'est donc affecté par rien de ce qui se passe localement dans le même mois.
+  \item \textbf{Le taux de change réagit au pétrole.} Si le brut flambe, la facture d'importation s'alourdit, ce qui met une pression sur l'ariary. Mais le change ne réagit pas instantanément à la masse monétaire ou à l'inflation du même mois.
+  \item \textbf{La masse monétaire suit.} La banque centrale ajuste la masse monétaire en fonction de ce qui se passe sur les marchés du pétrole et du change, mais avec un délai avant de réagir à l'inflation.
+  \item \textbf{L'inflation absorbe tout.} Les prix à la consommation réagissent à tout ce qui se passe -- pétrole, change, monnaie -- mais avec un certain retard.
+\end{enumerate}
+
+Ce n'est pas parfait comme identification, mais c'est simple et transparent. Et pour une petite économie ouverte comme Madagascar, l'hypothèse d'exogénéité du pétrole est tout à fait défendable.
+
+\subsection{Les données : d'où ça vient et comment on les a nettoyées}
+
+\subsubsection{La période et la fréquence}
+
+On couvre 25 ans, de janvier 2000 à janvier 2025. C'est 301 observations mensuelles. Assez long pour capturer plusieurs cycles économiques, assez court pour que les relations structurelles restent à peu près stables.
+
+\subsubsection{Les quatre variables}
+
+\textbf{OIL -- Le prix du baril de Brent (en \$).} C'est le prix de référence européen, qui sert de benchmark pour les importations malgaches. Source : World Bank Pink Sheet.
+
+\textbf{EXR -- Le taux de change ariary-dollar.} Il vient de la Banque Mondiale (indicateur PA.NUS.FCRF). Les données sont annuelles, on les a interpolées au mois par une méthode linéaire.
+
+\textbf{M2 -- La masse monétaire.} Mesurée en MGA courants (indicateur FM.LBL.BMNY.CN). Même problème : les données sont annuelles, interpolées en mensuel.
+
+\textbf{INF -- L'indice des prix à la consommation.} Là, on a deux sources. Pour 2016--2025, on utilise l'IPC de l'INSTAT Madagascar (fichier mensuel). Pour 2000--2016, on utilise l'indicateur FP.CPI.TOTL de la Banque Mondiale. On a raccordé les deux séries en les mettant à la même échelle au point de jonction, comme on raccorderait deux morceaux de rails.
+
+\subsubsection{Les dummies pour les chocs exceptionnels}
+
+On a ajouté trois variables muettes pour capturer les chocs qui sortent de l'ordinaire :
+\begin{itemize}
+  \item \textbf{D2008 :} septembre 2008 à juin 2009 -- la crise financière mondiale
+  \item \textbf{D2020 :} mars à août 2020 -- la pandémie de COVID-19
+  \item \textbf{D2022 :} février à décembre 2022 -- l'invasion de l'Ukraine
+\end{itemize}
+
+Ces dummies sont incluses comme variables exogènes dans le VAR. Elles empêchent les chocs exceptionnels de polluer l'estimation des relations normales entre les variables.
+
+\subsection{La stratégie en huit étapes}
+
+Voici comment on a procédé, concrètement :
+
+\begin{enumerate}
+  \item \textbf{Regarder les données.} On trace les graphiques, on calcule les moyennes et écart-types. Ça permet de repérer les tendances et les anomalies.
+  \item \textbf{Tester la stationnarité.} On vérifie si les séries sont stationnaires (leurs propriétés statistiques sont constantes dans le temps) ou si elles ont une tendance. On utilise deux tests : ADF (Dickey-Fuller augmenté) et Phillips-Perron.
+  \item \textbf{Tester la cointégration.} On regarde s'il existe des relations de long terme entre les variables avec le test de Johansen.
+  \item \textbf{Choisir le nombre de retards.} Combien de mois de passé faut-il inclure ? Les critères AIC et BIC aident à trancher.
+  \item \textbf{Estimer le VAR.} On lance l'estimation statistique.
+  \item \textbf{Identifier le SVAR.} On impose les restrictions de Cholesky pour passer des corrélations aux relations causales.
+  \item \textbf{Calculer les IRF et la FEVD.} Les réponses impulsionnelles (IRF) montrent comment une variable réagit à un choc. La décomposition de la variance (FEVD) montre quel choc contribue le plus aux fluctuations.
+  \item \textbf{Diagnostiquer le modèle.} On vérifie que le modèle n'est pas bancal : normalité des résidus, autocorrélation, stabilité structurelle, hétéroscédasticité.
+\end{enumerate}
+
+% ============================================================
+% 4. CE QU'ON A TROUVÉ
+% ============================================================
+\section{Les résultats}
+
+\subsection{Un premier regard sur les données}
+
+Le tableau~\ref{tab:descriptives} donne les grandes tendances.
+
+\begin{table}[H]
+  \centering
+  \caption{Statistiques descriptives (2000--2025)}
+  \label{tab:descriptives}
+  \begin{tabular}{lcccc}
+    \toprule
+    Variable & Moyenne & Écart-type & Min & Max \\
+    \midrule
+    Pétrole (\$/baril) & 66,62 & 28,77 & 18,60 & 133,87 \\
+    Taux de change (MGA/USD) & 2~586 & 997 & 1~238 & 4~525 \\
+    Masse monétaire ($\times 10^{12}$ MGA) & 7,73 & 8,04 & 1,09 & 21,72 \\
+    IPC (indice, base variable) & 139,54 & 54,42 & 25,81 & 210,83 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Ce qui saute aux yeux : la volatilité du pétrole (un écart-type de 29~\$/baril), la dépréciation continue de l'ariary (multiplié par 3,5 en 25 ans, passant de 1~350~MGA à 4~525~MGA pour un dollar), l'explosion de la masse monétaire (multipliée par 20), et la hausse continue des prix (l'indice passe de 25,8 à 210,8).
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{output/descriptives.png}
+  \caption{Les quatre séries sur la période}
+  \label{fig:series}
+\end{figure}
+
+\subsection{Les séries sont-elles stationnaires ?}
+
+Les tests ADF et Phillips-Perron (tableau~\ref{tab:stationnarite}) donnent des résultats contrastés. En niveau, toutes les séries semblent non stationnaires -- logique, elles ont une tendance. En première différence, le verdict dépend du test utilisé. L'ADF trouve que la masse monétaire et l'inflation restent non stationnaires, alors que le PP, plus robuste, les déclare stationnaires.
+
+\begin{table}[H]
+  \centering
+  \caption{Tests de stationnarité}
+  \label{tab:stationnarite}
+  \begin{tabular}{lcccc}
+    \toprule
+    & \multicolumn{2}{c}{ADF} & \multicolumn{2}{c}{Phillips-Perron} \\
+    \cmidrule(lr){2-3} \cmidrule(lr){4-5}
+    Variable & Statistique & p-value & Statistique & p-value \\
+    \midrule
+    \multicolumn{5}{l}{\textbf{En niveau}} \\
+    $\;$ Pétrole & $-$2,74 & 0,07 & $-$78,76 & 0,00 \\
+    $\;$ Taux de change & 0,12 & 0,97 & $-$288,71 & 0,00 \\
+    $\;$ M2 & 1,09 & 0,99 & $-$933,73 & 0,00 \\
+    $\;$ IPC & 3,33 & 1,00 & $-$360,45 & 0,00 \\
+    \midrule
+    \multicolumn{5}{l}{\textbf{En première différence}} \\
+    $\;$ $\Delta$Pétrole & $-$12,16 & 0,00 & $-$30,41 & 0,00 \\
+    $\;$ $\Delta$Taux de change & $-$3,25 & 0,02 & $-$46,25 & 0,00 \\
+    $\;$ $\Delta$M2 & $-$1,20 & 0,67 & $-$39,70 & 0,00 \\
+    $\;$ $\Delta$IPC & $-$1,01 & 0,75 & $-$27,19 & 0,00 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+On retient que les séries sont I(1) -- intégrées d'ordre 1 -- et on travaille en différences premières. C'est le choix le plus prudent.
+
+\subsection{Y a-t-il des relations de long terme ?}
+
+Le test de Johansen (tableau~\ref{tab:cointegration}) suggère qu'il y aurait 4 relations de cointégration. C'est un résultat mathématiquement possible mais économiquement suspect : avec 4 variables, le maximum théorique est de 3. On met ça sur le compte de la forte tendance des séries et d'une sensibilité excessive du test. On reste sur notre idée initiale : un modèle VAR en différences premières.
+
+\begin{table}[H]
+  \centering
+  \caption{Test de cointégration de Johansen}
+  \label{tab:cointegration}
+  \begin{tabular}{cccc}
+    \toprule
+    $H_0$ & Statistique trace & Valeur critique & Décision \\
+    \midrule
+    Rang 0 & 128,02 & 47,85 & Rejet \\
+    Rang $\leq$ 1 & 41,85 & 29,80 & Rejet \\
+    Rang $\leq$ 2 & 21,38 & 15,49 & Rejet \\
+    Rang $\leq$ 3 & 6,84 & 3,84 & Rejet \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Combien de mois de passé garder ?}
+
+Les critères AIC et BIC (tableau~\ref{tab:lags}) disent qu'un seul retard ($p=1$) suffit. Mais ça pose un problème : dans la vraie vie, la transmission d'un choc pétrolier prend 6 à 12 mois. On ne peut pas capturer ça avec un seul mois de retards. On choisit donc $p=4$, ce qui nous donne la possibilité de modéliser des effets jusqu'à 4 mois. C'est un compromis entre la rigueur statistique (AIC dit 1) et le réalisme économique (on sait que ça prend plus de temps).
+
+\begin{table}[H]
+  \centering
+  \caption{Choix du nombre de retards}
+  \label{tab:lags}
+  \begin{tabular}{cccccc}
+    \toprule
+    Retards & AIC & BIC \\
+    \midrule
+    0 & 56,76 & 56,81 \\
+    1 & \textbf{51,82} & \textbf{52,08} \\
+    2 & 51,88 & 52,34 \\
+    3 & 51,94 & 52,61 \\
+    4 & 52,01 & 52,87 \\
+    \bottomrule
+  \end{tabular}
+  \small\textit{Note : le choix retenu ($p=4$) n'est pas celui des critères, mais celui qui permet de capturer la dynamique réelle de transmission.}
+\end{table}
+
+\subsection{Ce que le VAR nous apprend}
+
+L'estimation du VAR(4) produit les résultats détaillés ci-dessous. Le tableau~\ref{tab:var_inf} se concentre sur l'équation qui nous intéresse le plus : celle de l'inflation.
+
+\begin{table}[H]
+  \centering
+  \caption{Équation de l'inflation dans le VAR(4)}
+  \label{tab:var_inf}
+  \begin{tabular}{lcccc}
+    \toprule
+    Variable & Coefficient & t-stat & p-value & Significatif ? \\
+    \midrule
+    Constante & 0,108 & 3,16 & 0,002 & Oui \\
+    Pétrole$_{t-1}$ & 0,006 & 1,95 & 0,051 & Presque \\
+    EXR$_{t-1}$ & $-$0,000 & $-$0,12 & 0,901 & Non \\
+    M2$_{t-1}$ & $\approx$0 & 1,18 & 0,240 & Non \\
+    IPC$_{t-1}$ & 0,751 & 11,99 & 0,000 & Oui \\
+    \% de variance expliquée ($R^2$) & \multicolumn{2}{c}{85,2\,\%} & & \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Le résultat le plus frappant : l'inflation est très fortement autocorrélée. Le coefficient de l'inflation retardée ($t-1$) est de 0,75 et très significatif. Autrement dit, l'inflation d'aujourd'hui est surtout l'inflation d'hier. Le pétrole est juste à la limite de la significativité ($p=0,051$). Le taux de change et la masse monétaire, eux, n'ont pas d'effet significatif sur l'inflation dans cette équation.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.55\textwidth]{output/stabilite_var.png}
+  \caption{Le cercle unité -- certaines racines sont dehors, le VAR n'est pas stable}
+  \label{fig:stabilite}
+\end{figure}
+
+Malheureusement, le VAR n'est pas stable. Le module maximal des racines est de 3,1 -- bien au-dessus du seuil de 1. C'est un problème. Un VAR instable peut produire des prévisions explosives et des réponses impulsionnelles peu fiables. On en reparle dans la discussion.
+
+\subsection{La matrice d'impact du SVAR}
+
+Une fois les restrictions de Cholesky imposées, on obtient la matrice d'impact contemporain (tableau~\ref{tab:B}). Les chiffres sont difficiles à lire directement à cause des différences d'échelle entre les variables, mais ce qui compte, c'est la direction des effets.
+
+\begin{table}[H]
+  \centering
+  \caption{L'impact immédiat des chocs structuraux}
+  \label{tab:B}
+  \begin{tabular}{lcccc}
+    \toprule
+    Choc $\downarrow$ $/$ Variable $\rightarrow$ & Pétrole & EXR & M2 & IPC \\
+    \midrule
+    Choc pétrole & 5,47 & 0 & 0 & 0 \\
+    Choc change & $-$27M & 6,46 & 0 & 0 \\
+    Choc monnaie & 245K & $-$28M & $1,6\times10^{10}$ & 0 \\
+    Choc IPC & $-$28M & $-$27M & 106 & 0,28 \\
+    \bottomrule
+  \end{tabular}
+  \small\textit{Note : les grands nombres viennent de l'échelle de M2 (mesurée en milliards). Seule la première colonne (effet d'un choc pétrolier) nous intéresse vraiment.}
+\end{table}
+
+\subsection{La réponse de l'inflation à un choc pétrolier -- le résultat clé}
+
+La figure~\ref{fig:irf} montre comment l'inflation réagit à un choc pétrolier. Et le résultat est... surprenant.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{output/irf.png}
+  \caption{Comment l'inflation réagit aux différents chocs}
+  \label{fig:irf}
+\end{figure}
+
+Quand le prix du pétrole augmente, l'inflation \textbf{baisse} légèrement. Oui, vous lisez bien. La réponse est négative : $-1,16$ points d'indice au deuxième mois, $-1,26$ au troisième, puis ça remonte progressivement. C'est l'exact opposé de ce qu'on attendait.
+
+Le tableau~\ref{tab:irf_oil_inf} donne le détail mois par mois.
+
+\begin{table}[H]
+  \centering
+  \caption{Réponse de l'inflation à un choc pétrolier}
+  \label{tab:irf_oil_inf}
+  \begin{tabular}{lcccccccccc}
+    \toprule
+    Mois & $t+1$ & $t+2$ & $t+3$ & $t+4$ & $t+5$ & $t+6$ & $t+7$ & $t+8$ & $t+9$ & $t+12$ \\
+    \midrule
+    Réponse & 0,00 & $-$1,16 & $-$1,26 & $-$1,08 & $-$0,86 & $-$0,67 & $-$0,52 & $-$0,40 & $-$0,32 & $-$0,16 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Qui explique vraiment l'inflation ? La FEVD}
+
+La décomposition de la variance (FEVD) répond à la question : sur 100\,\% des fluctuations de l'inflation, combien viennent du pétrole ? Du change ? De la monnaie ? De l'inflation elle-même ?
+
+\begin{table}[H]
+  \centering
+  \caption{Qui explique l'inflation ?}
+  \label{tab:fevd}
+  \begin{tabular}{ccccc}
+    \toprule
+    Horizon & Pétrole & Taux de change & M2 & Inflation elle-même \\
+    \midrule
+    1 mois & 0,0\,\% & 0,0\,\% & 0,0\,\% & 99,8\,\% \\
+    4 mois & 0,9\,\% & 0,3\,\% & $-$ & 98,2\,\% \\
+    8 mois & 0,9\,\% & 0,3\,\% & $-$ & 95,2\,\% \\
+    12 mois & 0,9\,\% & 0,3\,\% & $-$ & 89,7\,\% \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+La réponse est sans appel : \textbf{l'inflation s'explique d'abord par elle-même}. Près de 90\,\% de sa variance à 12 mois est due à ses propres chocs. Le pétrole n'explique même pas 1\,\%. Le taux de change, 0,3\,\%. La contribution de M2 est numériquement instable à cause de la différence d'échelle.
+
+En clair : si on veut comprendre pourquoi l'inflation fluctue à Madagascar, il faut regarder ailleurs que le pétrole, le change ou la monnaie.
+
+\subsection{Les tests de diagnostic : le modèle tient-il la route ?}
+
+On a vérifié quatre choses.
+
+\textbf{Normalité des résidus.} Les résidus ne sont pas normaux -- ce qui est très fréquent avec des données macroéconomiques mensuelles. C'est gênant pour la théorie statistique, mais ça n'invalide pas les résultats.
+
+\textbf{Autocorrélation.} Bonne nouvelle : aucune autocorrélation détectée. Le modèle capture correctement la dynamique temporelle.
+
+\textbf{Stabilité structurelle (CUSUM).} Visuellement, les résidus restent dans les bandes de confiance. Rien de très alarmant.
+
+\textbf{Hétéroscédasticité (White).} Le test n'a pas pu être réalisé à cause de problèmes numériques (trop de variables explicatives par rapport aux observations). Pas idéal, mais pas rédhibitoire non plus.
+
+% ============================================================
+% 5. DISCUSSION
+% ============================================================
+\section{Discussion : que faut-il retenir de tout ça ?}
+
+\subsection{Pourquoi l'inflation ne monte-t-elle pas quand le pétrole flambe ?}
+
+C'est le grand paradoxe de cette étude. On s'attendait à ce que le pétrole fasse monter les prix, et on trouve l'inverse. Trois explications possibles.
+
+\textbf{1. L'effet récession importée.} Quand le pétrole augmente, ça ralentit l'activité économique mondiale. Pour Madagascar, ça peut réduire la demande pour ses exportations (vanille, nickel, textile), freiner l'économie domestique, et donc réduire les pressions inflationnistes. Autrement dit, le canal de la demande l'emporte sur le canal des coûts.
+
+\textbf{2. La politique de stabilisation des carburants.} Le gouvernement malgache n'applique pas mécaniquement les variations du brut aux prix à la pompe. Il utilise un Fonds de Stabilisation des Hydrocarbures (FSH) pour lisser les chocs. Concrètement, quand le pétrole monte, l'État absorbe une partie du choc en réduisant ses marges ou en subventionnant. Ça déconnecte partiellement les prix internationaux des prix domestiques. Razafindrakoto et Roubaud (2018) avaient déjà montré ce mécanisme.
+
+\textbf{3. L'interpolation des données.} Nos séries de change et de monnaie sont annuelles, interpolées au mois. C'est un peu comme si on prenait une photo floue : on voit les grandes tendances, mais on rate les mouvements rapides. Si la transmission du choc pétrolier se fait en quelques semaines, l'interpolation ne la capte pas.
+
+\subsection{Le vrai moteur de l'inflation malgache}
+
+Si ce n'est pas le pétrole, qu'est-ce qui fait monter les prix à Madagascar ? La FEVD nous donne une piste : l'inflation est largement dominée par ses propres chocs. Ça peut sembler une tautologie, mais ça veut dire concrètement que les facteurs \emph{domestiques} sont les vrais moteurs.
+
+Parmi ces facteurs, la littérature identifie :
+\begin{itemize}
+  \item Les \textbf{chocs d'offre agricole} : les cyclones, les sécheresses, les invasions de criquets qui affectent la production de riz et les prix alimentaires.
+  \item Les \textbf{ajustements administrés} : les décisions du gouvernement sur les prix du carburant, de l'électricité, du transport en commun.
+  \item Les \textbf{anticipations d'inflation} : si les gens s'attendent à ce que les prix montent, ils adaptent leur comportement (achats préventifs, demandes de hausse de salaire) et créent l'inflation qu'ils redoutent.
+\end{itemize}
+
+\subsection{Le rôle limité du change et de la monnaie}
+
+Contre notre hypothèse~H2, le taux de change et la masse monétaire n'ont qu'un effet marginal sur l'inflation. Plusieurs raisons possibles :
+\begin{itemize}
+  \item L'économie malgache est moins intégrée aux chaînes de valeur mondiales qu'on ne le pense. Beaucoup de biens de consommation sont produits localement, avec des intrants locaux.
+  \item Le panier de l'IPC est dominé par l'alimentation (riz, manioc, légumes), dont les prix dépendent surtout de l'offre locale.
+  \item Le marché parallèle du change -- très actif à Madagascar -- crée un décalage entre le taux officiel et le taux réellement pratiqué.
+\end{itemize}
+
+\subsection{Les limites de l'étude -- il faut être honnête}
+
+Ce papier a des défauts, et il vaut mieux les reconnaître.
+
+\textbf{Les données ne sont pas parfaites.} Le change et la monnaie sont interpolés de l'annuel au mensuel. C'est un pis-aller. L'idéal serait d'avoir des données mensuelles de la Banque Centrale ou du FMI.
+
+\textbf{Le VAR n'est pas stable.} C'est gênant. Un VAR instable peut surestimer la persistance des chocs. Peut-être qu'avec $p=1$ (comme le suggère l'AIC) le problème disparaîtrait, mais on perdrait la dynamique de transmission.
+
+\textbf{Le SVAR n'a pas convergé.} Statsmodels nous a gentiment averti que l'estimation par maximum de vraisemblance n'a pas abouti. Ça jette un doute sur la fiabilité des coefficients de la matrice~B.
+
+\textbf{Le modèle est linéaire.} Or la littérature récente suggère que la transmission des chocs pétroliers est asymétrique : les hausses se transmettent plus vite et plus fort que les baisses (l'effet rochet). Un modèle non linéaire (Markov-Switching VAR, VAR à seuil) pourrait capturer cette asymétrie.
+
+\textbf{On n'a pas inclus le taux directeur.} La variable de politique monétaire manque. Le taux directeur de la BFM serait utile pour distinguer les chocs de politique monétaire des évolutions endogènes de M2.
+
+\subsection{Alors, quoi faire concrètement ?}
+
+Même avec ses limites, cette étude donne des pistes pour la politique économique.
+
+\textbf{Pour la Banque Centrale.} Si les chocs pétroliers ont si peu d'effet sur l'inflation, la priorité n'est pas de réagir à chaque fluctuation du brut. Mieux vaut se concentrer sur les déterminants domestiques : l'offre agricole, les anticipations, les pressions salariales. Cela dit, il faut rester vigilant : si les prix à la pompe sont libéralisés ou si le FSH s'épuise, le canal pétrolier pourrait se réactiver.
+
+\textbf{Pour le gouvernement.} Le Fonds de Stabilisation des Hydrocarbures est un outil efficace pour lisser les chocs, mais il coûte cher au budget de l'État. Une formule de prix automatique (avec une bande de fluctuation) pourrait être plus transparente et moins coûteuse.
+
+\textbf{Pour les chercheurs.} Le chantier est immense : obtenir des données mensuelles réelles, tester des modèles non linéaires, ajouter le taux directeur, intégrer le canal budgétaire... C'est un programme de recherche en soi.
+
+% ============================================================
+% 6. CONCLUSION
+% ============================================================
+\section{Conclusion : ce qu'on retient}
+
+On est partis d'une question simple : est-ce que le prix du pétrole fait monter l'inflation à Madagascar ? Après avoir passé 25 ans de données au crible d'un modèle SVAR, la réponse est... nuancée.
+
+\textbf{Le résultat principal : non, le pétrole n'explique pas l'inflation malgache.} Moins de 1\,\% des fluctuations des prix viennent du brut. Les vrais moteurs sont domestiques : chocs agricoles, anticipations, décisions administratives.
+
+\textbf{La surprise : l'inflation baisse (légèrement) quand le pétrole monte.} C'est contre-intuitif, mais ça s'explique par un mélange de stabilisation gouvernementale des carburants et d'effet récession importée.
+
+\textbf{La leçon pour la politique économique :} ne pas surréagir aux fluctuations du pétrole. Se concentrer sur les fondamentaux domestiques. Mais garder un œil sur le mécanisme de stabilisation des carburants.
+
+\textbf{Ce qu'il faudrait faire ensuite :}
+\begin{itemize}
+  \item Obtenir de vraies données mensuelles pour le change et la monnaie (IMF, banque centrale)
+  \item Tester un modèle non linéaire pour capturer l'asymétrie des chocs
+  \item Ajouter le taux directeur de la BFM
+  \item Construire un modèle DSGE pour simuler des scénarios de politique économique
+\end{itemize}
+
+En attendant, cette étude rappelle une vérité trop souvent oubliée : dans une petite économie insulaire, ce sont les facteurs locaux -- pas les chocs globaux -- qui font l'inflation.
+
+\begin{thebibliography}{20}
+
+\bibitem{apere2020}
+Apere, T. O., \& Ijomah, M. A. (2020). Asymmetric oil price shocks and inflation in Nigeria. \textit{Journal of Economics and Sustainable Development}, 11(3), 45--57.
+
+\bibitem{bernanke1997}
+Bernanke, B. S., Gertler, M., \& Watson, M. (1997). Systematic monetary policy and the effects of oil price shocks. \textit{Brookings Papers on Economic Activity}, 1997(1), 91--157.
+
+\bibitem{chuku2018}
+Chuku, C., Ekpo, N., \& Kim, S. (2018). Oil price shocks and inflation dynamics in Africa. \textit{Energy Economics}, 75, 147--160.
+
+\bibitem{fofana2021}
+Fofana, M., Diarra, S., \& Kouassi, E. (2021). Oil price shocks and inflation in African oil-importing countries. \textit{Energy Policy}, 152, 112227.
+
+\bibitem{hamilton1983}
+Hamilton, J. D. (1983). Oil and the macroeconomy since World War II. \textit{Journal of Political Economy}, 91(2), 228--248.
+
+\bibitem{kilian2009}
+Kilian, L. (2009). Not all oil price shocks are alike. \textit{American Economic Review}, 99(3), 1053--1069.
+
+\bibitem{ramiandrisoa2019}
+Ramiandrisoa, T., \& Randriambola, S. (2019). Déterminants de l'inflation à Madagascar : une approche VAR structurelle. \textit{Bulletin de la BFM}, 45, 22--41.
+
+\bibitem{razafindrakoto2018}
+Razafindrakoto, M., \& Roubaud, F. (2018). La transmission des prix internationaux aux prix domestiques à Madagascar. \textit{Revue d'Économie du Développement}, 26(1), 81--110.
+
+\bibitem{sims1980}
+Sims, C. A. (1980). Macroeconomics and reality. \textit{Econometrica}, 48(1), 1--48.
+
+\end{thebibliography}
+
+\end{document}
